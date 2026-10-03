@@ -16,7 +16,8 @@ from bs4 import BeautifulSoup
 
 DINATICKET_EVENTS = {
     "Escondido": "https://www.dinaticket.com/es/provider/20845/event/4948919",
-    "Escondido2": " https://www.dinaticket.com/es/provider/19977/event/4950104"
+    "am": " https://www.dinaticket.com/es/provider/19977/event/4950104",
+   "fyc": " https://www.dinaticket.com/es/provider/20073/event/4949976" 
 }
 
 UA = {
