@@ -1084,6 +1084,7 @@
     <script id="PAYLOAD" type="application/json">
       {{PAYLOAD_JSON}}
     </script>
+    <script id="PAYLOAD" type="application/json">{{PAYLOAD_JSON}}</script>
     <script>
       "use strict";
       // Contrato original intacto: eventos[sala][periodo].table.rows.
@@ -1219,6 +1220,7 @@
         const raw = $("PAYLOAD").textContent.trim();
         // Dividido para que un reemplazo global de la plantilla no afecte a esta comprobación.
         const unresolved = raw === "{{" + "PAYLOAD_JSON" + "}}";
+        const unresolved = raw === String.fromCharCode(123, 123) + "PAYLOAD_JSON" + String.fromCharCode(125, 125);
         function fallback(title, message, offerDemo = false) {
           $("fallback").hidden = false;
           $("navigation").hidden = true;
