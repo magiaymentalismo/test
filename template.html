@@ -11,7 +11,6 @@
       name="description"
       content="Sesiones, disponibilidad y ventas de Magia & Teatro."
     />
-    <link rel="manifest" href="manifest.json?v=20251201" />
     <link rel="manifest" href="manifest.json?v=20260601" />
     <meta name="theme-color" content="#101820" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -755,6 +754,7 @@
       #contenido {
         scroll-margin-top: 100px;
       }
+
       /* Liquid Glass · edición viva. Cambia estos tonos para personalizar cada sala. */
       :root {
         --bg: #120e29;
@@ -1081,14 +1081,10 @@
       </footer>
     </main>
     <!-- PRODUCCIÓN: conservar este bloque y sustituir únicamente mediante el generador habitual. -->
-    <script id="PAYLOAD" type="application/json">
-      {{PAYLOAD_JSON}}
-    </script>
     <script id="PAYLOAD" type="application/json">{{PAYLOAD_JSON}}</script>
     <script>
       "use strict";
       // Contrato original intacto: eventos[sala][periodo].table.rows.
-      // Cada fila: [fecha_label, hora, vendidas, fecha_iso, cap, stock, abono].
       // Columnas actuales: Fecha, Hora, Vendidas, FechaISO, Capacidad, Stock, BuyUrl, Source.
       // También admite Abono explícito y el formato legado.
       // Los ejemplos solo se cargan con ?demo=1 cuando el placeholder no se ha sustituido.
@@ -1219,7 +1215,6 @@
         }
         const raw = $("PAYLOAD").textContent.trim();
         // Dividido para que un reemplazo global de la plantilla no afecte a esta comprobación.
-        const unresolved = raw === "{{" + "PAYLOAD_JSON" + "}}";
         const unresolved = raw === String.fromCharCode(123, 123) + "PAYLOAD_JSON" + String.fromCharCode(125, 125);
         function fallback(title, message, offerDemo = false) {
           $("fallback").hidden = false;
@@ -1281,7 +1276,6 @@
             node(
               "span",
               "",
-              "Datos ficticios para revisar el diseño. El placeholder de producción permanece intacto.",
               "Datos ficticios para explorar el diseño y los filtros.",
             ),
           );
@@ -1420,15 +1414,6 @@
           const index = (name, fallback) =>
             headers.includes(name) ? headers.indexOf(name) : fallback;
           const rows = getRows()
-            .map((r) => ({
-              fecha_label: r[0],
-              hora: r[1],
-              vendidas: number(r[2]),
-              fecha_iso: r[3],
-              cap: number(r[4]),
-              stock: number(r[5]),
-              abono: r[6],
-            }))
             .map((r) => {
               // El contrato actual usa BuyUrl/Source en las posiciones 6 y 7.
               // Abono solo se interpreta si está identificado por nombre o valor legado.
@@ -1525,7 +1510,6 @@
             const sold = r.stock === 0,
               chip = sold
                 ? "sold"
-                : r.vendidas >= 10
                 : r.stock !== null && r.stock <= 3
                   ? "gold"
                   : r.vendidas >= 1
@@ -1560,7 +1544,6 @@
             );
             if (d) dateText.dateTime = r.fecha_iso;
             label.append(dateText);
-            left.append(time, label);
             left.append(
               time,
               label,
@@ -1580,16 +1563,11 @@
               node("strong", "", fmt(r.vendidas)),
               document.createTextNode(" vendidas"),
             );
-            if (active === "Escondido") {
             {
               nums.append(
                 document.createTextNode(" / " + fmt(r.cap) + " · "),
                 node("strong", "", fmt(r.stock)),
                 document.createTextNode(" disponibles"),
-              );
-            } else if (r.stock !== null) {
-              nums.append(
-                document.createTextNode(" · " + fmt(r.stock) + " disponibles"),
               );
             }
             right.append(nums);
@@ -1606,9 +1584,6 @@
                       ? "Últimas " +
                         fmt(r.stock) +
                         (r.stock === 1 ? " entrada" : " entradas")
-                    : r.vendidas === 0
-                      ? "Sin ventas todavía"
-                      : "Disponible",
                       : r.vendidas === 0
                         ? "Sin ventas todavía"
                         : "Disponible",
@@ -1640,8 +1615,6 @@
             ul.append(li);
           }
         }
-        $("from").addEventListener("change", render);
-        $("to").addEventListener("change", render);
         let selectedRange = null;
         function resetQuick() {
           selectedRange = null;
@@ -1703,33 +1676,27 @@
       })();
     </script>
     <script>
-      // Se conservan la ruta y versión originales. El SW requiere HTTPS o localhost.
-      if (
-        "serviceWorker" in navigator &&
-        (location.protocol === "https:" ||
-          location.hostname === "localhost" ||
-          location.hostname === "127.0.0.1")
-      ) {
       (function () {
         if (!("serviceWorker" in navigator)) return;
+
         const RELOAD_KEY = "sw-reloaded-once";
+
         navigator.serviceWorker
-          .register("sw.js?v=20251201")
-          .catch((error) =>
-            console.warn("No se pudo registrar el service worker:", error),
-          );
-      }
           .register("sw.js?v=2026-06-01-01")
           .then((reg) => {
             reg.update().catch(() => {});
+
             function activateWaitingSW() {
               if (!reg.waiting) return;
               reg.waiting.postMessage({ type: "SKIP_WAITING" });
             }
+
             activateWaitingSW();
+
             reg.addEventListener("updatefound", () => {
               const sw = reg.installing;
               if (!sw) return;
+
               sw.addEventListener("statechange", () => {
                 if (
                   sw.state === "installed" &&
@@ -1739,6 +1706,7 @@
                 }
               });
             });
+
             navigator.serviceWorker.addEventListener("controllerchange", () => {
               if (sessionStorage.getItem(RELOAD_KEY) === "1") return;
               sessionStorage.setItem(RELOAD_KEY, "1");
