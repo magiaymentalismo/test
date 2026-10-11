@@ -1,373 +1,1350 @@
 <!doctype html>
 <html lang="es">
-
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Cartelera — Magia & Teatro</title>
-  <link rel="manifest" href="manifest.json?v=20251201">
-  <meta name="theme-color" content="#000000">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-  <style>
-    :root {
-      --bg-deep: #000000;
-      --glass-surface: rgba(255, 255, 255, 0.08);
-      --glass-border: rgba(255, 255, 255, 0.12);
-      --glass-highlight: rgba(255, 255, 255, 0.2);
-      --text-primary: #ffffff;
-      --text-secondary: rgba(255, 255, 255, 0.6);
-      --accent-gold: #ffd700;
-      --accent-green: #34c759;
-      --accent-orange: #ff9f0a;
-      --accent-red: #ff453a;
-
-      --blur-md: 20px;
-      --radius-lg: 24px;
-      --radius-md: 16px;
-      --radius-full: 999px;
-
-      --font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-      --safe-top: env(safe-area-inset-top, 20px);
-    }
-
-    body {
-      background-color: var(--bg-deep);
-      background-image:
-        radial-gradient(circle at 10% 20%, rgba(60, 20, 100, 0.4) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(0, 80, 100, 0.3) 0%, transparent 40%),
-        radial-gradient(circle at 50% 50%, rgba(40, 40, 40, 0.5) 0%, transparent 60%);
-      background-attachment: fixed;
-      margin: 0;
-      color: var(--text-primary);
-      font-family: var(--font-stack);
-      -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
-      padding-bottom: 40px;
-      padding-top: calc(var(--safe-top) + 60px);
-    }
-
-    .wrap {
-      max-width: 1040px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    /* Dynamic Island */
-    .dynamic-island-container {
-      position: fixed;
-      top: 10px;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
-      z-index: 1000;
-      pointer-events: none;
-    }
-
-    .dynamic-island {
-      pointer-events: auto;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(30px);
-      -webkit-backdrop-filter: blur(30px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 30px;
-      padding: 8px 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      max-width: 90%;
-    }
-
-    .island-title {
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .island-meta {
-      font-size: 12px;
-      color: var(--text-secondary);
-      border-left: 1px solid rgba(255, 255, 255, 0.2);
-      padding-left: 12px;
-    }
-
-    /* Tabs */
-    .tabs {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
-      overflow-x: auto;
-      padding: 4px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      justify-content: center;
-    }
-
-    .tabs::-webkit-scrollbar {
-      display: none;
-    }
-
-    .tab {
-      padding: 12px 20px;
-      border-radius: var(--radius-full);
-      background: var(--glass-surface);
-      border: 1px solid var(--glass-border);
-      color: var(--text-secondary);
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.3s;
-      backdrop-filter: blur(var(--blur-md));
-      -webkit-backdrop-filter: blur(var(--blur-md));
-    }
-
-    .tab.active {
-      background: rgba(255, 255, 255, 0.9);
-      color: #000;
-      border-color: transparent;
-      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
-      transform: scale(1.02);
-    }
-
-    /* Panel */
-    .panel {
-      background: rgba(20, 20, 20, 0.4);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      backdrop-filter: blur(40px);
-      -webkit-backdrop-filter: blur(40px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    }
-
-    /* Subtabs */
-    .subtabs {
-      display: inline-flex;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 4px;
-      border-radius: var(--radius-full);
-      margin-bottom: 24px;
-      border: 1px solid var(--glass-border);
-    }
-
-    .subtab {
-      padding: 8px 20px;
-      border-radius: var(--radius-full);
-      color: var(--text-secondary);
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .subtab.active {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-    }
-
-    /* Items */
-    .list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .month {
-      margin: 32px 0 12px;
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--accent-gold);
-      text-transform: capitalize;
-      padding-left: 8px;
-    }
-
-    .item {
-      display: flex;
-      justify-content: space-between;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-md);
-      transition: 0.2s;
-    }
-
-    .item:hover {
-      background: rgba(255, 255, 255, 0.06);
-      transform: translateY(-2px);
-    }
-
-    .item-left {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .item-date {
-      font-size: 17px;
-      font-weight: 600;
-    }
-
-    .item-time {
-      font-size: 15px;
-      color: var(--text-secondary);
-    }
-
-    .item-right {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 8px;
-    }
-
-    .chip {
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      text-transform: uppercase;
-      backdrop-filter: blur(10px);
-    }
-
-    .chip.green {
-      background: rgba(52, 199, 89, 0.2);
-      color: var(--accent-green);
-    }
-
-    .chip.gold {
-      background: rgba(255, 215, 0, 0.15);
-      color: var(--accent-gold);
-    }
-
-    .chip.gray {
-      background: rgba(255, 255, 255, 0.1);
-      color: var(--text-secondary);
-    }
-
-    .chip.sold {
-      background: rgba(255, 69, 58, 0.15);
-      color: var(--accent-red);
-      text-decoration: line-through;
-    }
-  </style>
-</head>
-
-<body>
-
-  <div class="dynamic-island-container">
-    <div class="dynamic-island">
-      <div class="island-title">Cartelera</div>
-      <div class="island-meta" id="meta"></div>
-    </div>
-  </div>
-
-  <div class="wrap">
-    <div id="tabs" class="tabs"></div>
-
-    <div class="panel">
-
-      <div id="list" class="list"></div>
-    </div>
-  </div>
-
-  <!-- PAYLOAD -->
-  <script id="PAYLOAD" type="application/json">{{PAYLOAD_JSON}}</script>
-
-  <script>
-    const payload = JSON.parse(document.getElementById("PAYLOAD").textContent);
-    const eventos = payload.eventos || {};
-    let active = Object.keys(eventos)[0] || null;
-    let subMode = "proximas";
-
-    document.getElementById("meta").textContent =
-      new Date(payload.generated_at).toLocaleString("es-ES", {
-        hour: '2-digit', minute: '2-digit'
-      });
-
-    /* Tabs principales */
-    const tabsEl = document.getElementById("tabs");
-    for (const sala of Object.keys(eventos)) {
-      const ev = eventos[sala];
-      const total = (ev.proximas?.table?.rows?.length || 0);
-      const b = document.createElement("button");
-      b.textContent = `${sala} (${total})`;
-      b.dataset.tab = sala;
-      b.className = "tab" + (sala === active ? " active" : "");
-      b.onclick = () => { active = sala; updateTabs(); render(); };
-      tabsEl.appendChild(b);
-    }
-
-    function updateTabs() {
-      document.querySelectorAll(".tab").forEach(t => {
-        t.classList.toggle("active", t.dataset.tab === active);
-      });
-    }
-
-
-
-    const DAYS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
-    function dayName(f) {
-      return DAYS[new Date(f + "T00:00:00").getDay()];
-    }
-
-    function getRows() {
-      const ev = eventos[active];
-      const sec = ev[subMode];
-      return (sec?.table?.rows) || [];
-    }
-
-    function render() {
-      const cont = document.getElementById("list");
-      cont.innerHTML = "";
-      let rows = getRows();
-      rows = rows.map(r => ({
-        fecha_label: r[0], hora: r[1],
-        vendidas: r[2], fecha_iso: r[3],
-        cap: r[4], stock: r[5]
-      }));
-
-      rows.sort((a, b) => (a.fecha_iso + a.hora).localeCompare(b.fecha_iso + b.hora));
-
-      let currentMonth = null;
-      for (const r of rows) {
-        const d = new Date(r.fecha_iso + "T00:00:00");
-        const key = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
-        if (key !== currentMonth) {
-          currentMonth = key;
-          const h = document.createElement("h3");
-          h.className = "month";
-          h.textContent = d.toLocaleDateString("es-ES", { month: "long", year: "numeric" });
-          cont.appendChild(h);
-        }
-
-        const chip = r.stock === 0 ? "sold" :
-          r.vendidas >= 10 ? "gold" :
-            r.vendidas >= 1 ? "green" : "gray";
-
-        const div = document.createElement("div");
-        div.className = "item";
-        div.innerHTML = `
-          <div class="item-left">
-            <div class="item-date">${r.fecha_label} <span style="opacity:0.6">(${dayName(r.fecha_iso)})</span></div>
-            <div class="item-time">${r.hora} h</div>
-          </div>
-          <div class="item-right">
-            <div class="chip ${chip}">
-              ${active === "Escondido" ? `${r.vendidas} / ${r.cap} · Quedan ${r.stock}` : `Vendidas: ${r.vendidas}`}
-            </div>
-          </div>`;
-        cont.appendChild(div);
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Cartelera — Magia & Teatro</title>
+    <meta
+      name="description"
+      content="Sesiones, disponibilidad y ventas de Magia & Teatro."
+    />
+    <link rel="manifest" href="manifest.json?v=20251201" />
+    <meta name="theme-color" content="#101820" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <style>
+      /* Diseño editable: colores, espaciado y superficies. Sin dependencias externas. */
+      :root {
+        color-scheme: dark;
+        --bg: #101820;
+        --ink: #f5f7f5;
+        --muted: #b4c0c7;
+        --line: #ffffff20;
+        --glass: #23323cdd;
+        --mint: #c4f3d8;
+        --gold: #f0d49e;
+        --red: #ffb5ac;
+        --radius: 26px;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI",
+          sans-serif;
       }
-    }
-
-    render();
-  </script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=20251201').then(r => console.log('SW Registered')).catch(console.error);
-    }
-  </script>
-</body>
-
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        min-height: 100vh;
+        min-height: 100dvh;
+        -webkit-font-smoothing: antialiased;
+      }
+      body:before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background:
+          radial-gradient(ellipse at 95% 0%, #37675955, transparent 53%),
+          radial-gradient(ellipse at 0% 70%, #33496255, transparent 50%);
+        pointer-events: none;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      button,
+      a,
+      input,
+      select {
+        -webkit-tap-highlight-color: transparent;
+      }
+      button {
+        color: inherit;
+      }
+      button:focus-visible,
+      a:focus-visible,
+      input:focus-visible,
+      select:focus-visible {
+        outline: 3px solid var(--mint);
+        outline-offset: 4px;
+      }
+      button:active {
+        transform: scale(0.98);
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .wrap {
+        width: min(1120px, 100%);
+        margin: auto;
+        padding: 0 32px;
+      }
+      .skip {
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        z-index: 10;
+        transform: translateY(-160%);
+        padding: 12px;
+        background: var(--mint);
+        color: var(--bg);
+        border-radius: 12px;
+      }
+      .skip:focus {
+        transform: none;
+      }
+      .topbar {
+        padding-top: env(safe-area-inset-top, 0px);
+      }
+      .topbar-inner {
+        min-height: 88px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        border-bottom: 1px solid var(--line);
+      }
+      .brand {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        font-size: 14px;
+        font-weight: 650;
+        letter-spacing: 0.01em;
+      }
+      .mark {
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 38px;
+        border: 1px solid #c4f3d86b;
+        border-radius: 12px;
+        color: var(--mint);
+        font-size: 24px;
+        background: #c4f3d80a;
+      }
+      .meta {
+        font-size: 12px;
+        color: var(--muted);
+        text-align: right;
+        line-height: 1.6;
+      }
+      .meta span {
+        display: block;
+      }
+      .connection {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 6px;
+      }
+      .dot {
+        height: 6px;
+        width: 6px;
+        border-radius: 50%;
+        background: var(--mint);
+      }
+      .hero {
+        padding: 55px 0 35px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 28px;
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.19em;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--mint);
+        margin: 0 0 13px;
+      }
+      h1 {
+        font-size: clamp(44px, 7vw, 76px);
+        font-weight: 600;
+        letter-spacing: -0.065em;
+        line-height: 1.04;
+        margin: 0 0 17px;
+      }
+      .intro {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.6;
+      }
+      .hero-note {
+        border-left: 1px solid var(--line);
+        padding-left: 22px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.7;
+        max-width: 180px;
+      }
+      .hero-note strong {
+        display: block;
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .navigation {
+        position: sticky;
+        top: calc(env(safe-area-inset-top, 0px) + 10px);
+        z-index: 3;
+        margin: 0 -8px 26px;
+        padding: 8px;
+        border-radius: 999px;
+        background: var(--glass);
+        border: 1px solid #ffffff28;
+        box-shadow:
+          inset 0 1px 0 #ffffff1c,
+          0 10px 30px #0002;
+        backdrop-filter: blur(28px) saturate(140%);
+        -webkit-backdrop-filter: blur(28px) saturate(140%);
+      }
+      .tabs {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        scrollbar-width: thin;
+        scroll-padding: 8px;
+      }
+      .tab {
+        border: 1px solid transparent;
+        background: transparent;
+        border-radius: 999px;
+        min-height: 46px;
+        padding: 11px 21px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--muted);
+        white-space: nowrap;
+        font-weight: 600;
+        font-size: 14px;
+        transition:
+          background 0.18s,
+          color 0.18s;
+      }
+      .tab:hover {
+        background: #ffffff0d;
+        color: var(--ink);
+      }
+      .tab.active {
+        background: #e1eee7;
+        color: #142820;
+        box-shadow:
+          inset 0 1px 1px white,
+          0 2px 8px #0002;
+      }
+      .tab-count {
+        font-size: 11px;
+        min-width: 22px;
+        padding: 3px 6px;
+        text-align: center;
+        background: #ffffff12;
+        border-radius: 8px;
+      }
+      .tab.active .tab-count {
+        background: #16362512;
+      }
+      .overview {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr 1fr;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: linear-gradient(110deg, #d1ecdf0b, #ffffff02);
+        padding: 26px 0;
+        margin-bottom: 35px;
+      }
+      .stat {
+        padding: 0 28px;
+        min-width: 0;
+      }
+      .stat + .stat {
+        border-left: 1px solid var(--line);
+      }
+      .stat dt {
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      .stat dd {
+        font-size: 32px;
+        font-weight: 550;
+        letter-spacing: -0.045em;
+        margin: 0;
+        font-variant-numeric: tabular-nums;
+      }
+      .stat small {
+        font-size: 12px;
+        font-weight: 400;
+        color: var(--muted);
+        letter-spacing: 0;
+        margin-left: 7px;
+      }
+      .stat:first-child dd {
+        color: var(--mint);
+      }
+      .section-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 22px;
+      }
+      h2 {
+        margin: 0;
+        font-size: 23px;
+        letter-spacing: -0.035em;
+        font-weight: 550;
+      }
+      .subtabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        padding: 4px;
+        border-radius: 999px;
+        background: #0003;
+        border: 1px solid var(--line);
+      }
+      .subtab {
+        min-height: 38px;
+        background: transparent;
+        border: 0;
+        border-radius: 999px;
+        color: var(--muted);
+        padding: 8px 16px;
+        font-size: 13px;
+      }
+      .subtab.active {
+        background: #ffffff16;
+        color: var(--ink);
+      }
+      .filters {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .field input {
+        min-height: 44px;
+        min-width: 155px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #ffffff06;
+        color: var(--ink);
+        padding: 9px 12px;
+      }
+      .reset {
+        min-height: 44px;
+        border: 0;
+        background: transparent;
+        color: var(--mint);
+        font-size: 12px;
+        padding: 8px 12px;
+        border-radius: 12px;
+      }
+      .reset:hover {
+        background: #c4f3d810;
+      }
+      .result-count {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 12px;
+        padding-bottom: 13px;
+      }
+      .list {
+        padding-bottom: 32px;
+      }
+      .month-heading {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin: 25px 0 14px;
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        font-weight: 500;
+        text-transform: uppercase;
+      }
+      .month-heading:after {
+        content: "";
+        height: 1px;
+        background: var(--line);
+        flex: 1;
+      }
+      .events {
+        display: grid;
+        gap: 10px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+      .item {
+        display: grid;
+        grid-template-columns: 64px minmax(150px, 1fr) minmax(220px, 1fr);
+        align-items: center;
+        gap: 23px;
+        padding: 22px 24px;
+        border: 1px solid #ffffff14;
+        border-radius: 20px;
+        background: #1b2730;
+        box-shadow: inset 0 1px 0 #ffffff05;
+        transition:
+          background 0.2s,
+          border-color 0.2s;
+      }
+      .item:hover {
+        background: #22323b;
+        border-color: #ffffff2b;
+      }
+      .date-tile {
+        width: 62px;
+        min-height: 68px;
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        background: linear-gradient(145deg, #d7efe017, #ffffff04);
+        border: 1px solid #ffffff15;
+      }
+      .date-tile span {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+      }
+      .date-tile strong {
+        font-size: 29px;
+        font-weight: 500;
+        letter-spacing: -0.05em;
+      }
+      .session-time {
+        font-size: 22px;
+        font-weight: 550;
+        letter-spacing: -0.03em;
+        margin: 0 0 7px;
+      }
+      .session-date {
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .item-right {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-end;
+      }
+      .numbers {
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+        text-align: right;
+      }
+      .numbers strong {
+        color: var(--ink);
+        font-size: 17px;
+        font-weight: 600;
+      }
+      .badges {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 6px;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 550;
+        padding: 5px 9px;
+        border-radius: 7px;
+        line-height: 1.4;
+      }
+      .green {
+        background: #b9f6ce12;
+        color: var(--mint);
+      }
+      .gold {
+        background: #f0d49e14;
+        color: var(--gold);
+      }
+      .gray {
+        background: #ffffff0b;
+        color: #c1cbd0;
+      }
+      .sold {
+        background: #ffb5ac12;
+        color: var(--red);
+      }
+      .abono-chip {
+        border: 1px solid currentColor;
+        background: transparent;
+      }
+      .meter {
+        width: 130px;
+        height: 3px;
+        background: #ffffff16;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .meter span {
+        display: block;
+        height: 100%;
+        background: var(--mint);
+        border-radius: 4px;
+      }
+      .item.is-sold .meter span {
+        background: var(--red);
+      }
+      .notice,
+      .empty {
+        padding: 26px;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+      .notice {
+        margin-bottom: 22px;
+        background: #e8cd8f0a;
+        font-size: 13px;
+      }
+      .notice strong,
+      .empty strong {
+        color: var(--ink);
+        display: block;
+        margin-bottom: 5px;
+      }
+      .empty {
+        text-align: center;
+        padding: 48px 24px;
+        background: #ffffff03;
+      }
+      .empty p {
+        margin: 6px 0 15px;
+      }
+      .demo-button {
+        border: 1px solid #c4f3d850;
+        border-radius: 999px;
+        min-height: 44px;
+        padding: 10px 20px;
+        color: var(--mint);
+        background: #c4f3d810;
+      }
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 23px 0 calc(30px + env(safe-area-inset-bottom, 0px));
+        border-top: 1px solid var(--line);
+        font-size: 11px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+      .footer a {
+        color: var(--mint);
+        text-decoration: none;
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      @supports not (backdrop-filter: blur(1px)) {
+        .navigation {
+          background: #24333d;
+        }
+      }
+      @media (prefers-reduced-transparency: reduce) {
+        .navigation {
+          background: #24333d;
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+          scroll-behavior: auto !important;
+        }
+      }
+      @media (prefers-contrast: more) {
+        :root {
+          --muted: #e0e6e9;
+          --line: #ffffff66;
+        }
+        .item {
+          border-color: #ffffff66;
+        }
+        .chip {
+          border: 1px solid currentColor;
+        }
+      }
+      @media (max-width: 650px) {
+        .wrap {
+          padding: 0 20px;
+        }
+        .topbar-inner {
+          min-height: 77px;
+        }
+        .brand {
+          font-size: 12px;
+        }
+        .meta {
+          font-size: 10px;
+        }
+        .hero {
+          padding: 36px 0 29px;
+        }
+        .hero-note {
+          display: none;
+        }
+        h1 {
+          font-size: 52px;
+        }
+        .intro {
+          font-size: 13px;
+        }
+        .navigation {
+          margin: 0 -5px 22px;
+          padding: 5px;
+        }
+        .tab {
+          padding: 10px 15px;
+          font-size: 13px;
+          min-height: 44px;
+          gap: 9px;
+        }
+        .overview {
+          padding: 20px 0;
+          border-radius: 21px;
+          margin-bottom: 29px;
+          grid-template-columns: 1fr 1fr 1fr;
+        }
+        .stat {
+          padding: 0 14px;
+        }
+        .stat dt {
+          font-size: 10px;
+          line-height: 1.4;
+          min-height: 28px;
+          margin-bottom: 5px;
+        }
+        .stat dd {
+          font-size: 27px;
+        }
+        .stat small {
+          display: block;
+          font-size: 10px;
+          margin: 4px 0 0;
+        }
+        .section-heading {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 15px;
+        }
+        h2 {
+          font-size: 22px;
+        }
+        .filters {
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+        .field {
+          flex: 1 1 calc(50% - 10px);
+          min-width: 0;
+        }
+        .field input {
+          width: 100%;
+          min-width: 0;
+          font-size: 14px;
+        }
+        .reset {
+          padding-left: 0;
+        }
+        .result-count {
+          padding-bottom: 14px;
+        }
+        .item {
+          grid-template-columns: 54px minmax(0, 1fr);
+          gap: 14px;
+          padding: 17px 16px;
+          border-radius: 18px;
+        }
+        .date-tile {
+          width: 54px;
+          min-height: 63px;
+        }
+        .session-time {
+          font-size: 21px;
+        }
+        .item-right {
+          grid-column: 1/-1;
+          border-top: 1px solid #ffffff10;
+          padding-top: 13px;
+          align-items: flex-start;
+          gap: 9px;
+        }
+        .numbers {
+          text-align: left;
+        }
+        .badges {
+          justify-content: flex-start;
+        }
+        .meter {
+          width: 100%;
+        }
+        .footer {
+          font-size: 10px;
+        }
+        .month-heading {
+          font-size: 11px;
+        }
+      }
+      @media (max-width: 360px) {
+        .wrap {
+          padding: 0 14px;
+        }
+        .stat {
+          padding: 0 10px;
+        }
+        .stat dd {
+          font-size: 24px;
+        }
+        .brand {
+          gap: 7px;
+        }
+        .mark {
+          width: 28px;
+        }
+        .meta {
+          max-width: 120px;
+        }
+      }
+      #contenido {
+        scroll-margin-top: 100px;
+      }
+    </style>
+  </head>
+  <body id="inicio">
+    <a class="skip" href="#contenido">Saltar a las sesiones</a>
+    <header class="topbar wrap">
+      <div class="topbar-inner">
+        <div class="brand">
+          <span class="mark" aria-hidden="true">✦</span> MAGIA & TEATRO
+        </div>
+        <div class="meta">
+          <span id="meta">Sin actualización disponible</span
+          ><span class="connection" id="connection"></span>
+        </div>
+      </div>
+    </header>
+    <main class="wrap">
+      <section class="hero" aria-labelledby="title">
+        <div>
+          <p class="eyebrow">La próxima función</p>
+          <h1 id="title">Cartelera.</h1>
+          <p class="intro">Todas las sesiones. Cada sala. De un vistazo.</p>
+        </div>
+        <div class="hero-note">
+          <strong>El escenario, al día.</strong>Consulta ventas y disponibilidad
+          por sesión.
+        </div>
+      </section>
+      <div id="notice" class="notice" role="status" hidden></div>
+      <nav class="navigation" aria-label="Filtrar por sala" id="navigation">
+        <div id="tabs" class="tabs"></div>
+      </nav>
+      <div id="dashboard" hidden>
+        <dl class="overview" aria-label="Resumen de las sesiones filtradas">
+          <div class="stat">
+            <dt>Sesiones en esta vista</dt>
+            <dd id="stat-sessions">0</dd>
+          </div>
+          <div class="stat">
+            <dt>Entradas vendidas</dt>
+            <dd id="stat-sales">0</dd>
+          </div>
+          <div class="stat">
+            <dt>Entradas disponibles</dt>
+            <dd id="stat-stock">—</dd>
+          </div>
+        </dl>
+        <section id="contenido" tabindex="-1" aria-labelledby="sala-title">
+          <div class="section-heading">
+            <h2 id="sala-title">Sesiones</h2>
+            <div
+              class="subtabs"
+              id="subtabs"
+              role="group"
+              aria-label="Periodo de las sesiones"
+            ></div>
+          </div>
+          <div class="filters">
+            <label class="field">Desde<input type="date" id="from" /></label
+            ><label class="field">Hasta<input type="date" id="to" /></label
+            ><button class="reset" id="reset" type="button">
+              Limpiar fechas</button
+            ><span
+              class="result-count"
+              id="result-count"
+              role="status"
+              aria-live="polite"
+            ></span>
+          </div>
+          <p id="date-error" class="notice" role="alert" hidden>
+            La fecha «Desde» debe ser anterior o igual a «Hasta».
+          </p>
+          <div id="list" class="list"></div>
+        </section>
+      </div>
+      <div id="fallback" class="empty" hidden></div>
+      <noscript
+        ><p class="notice">
+          Activa JavaScript para consultar las sesiones y filtrar por sala.
+        </p></noscript
+      >
+      <footer class="footer">
+        <span
+          >Magia & Teatro<br />Las cifras corresponden a la última
+          actualización.</span
+        ><a href="#inicio">Volver arriba ↑</a>
+      </footer>
+    </main>
+    <!-- PRODUCCIÓN: conservar este bloque y sustituir únicamente mediante el generador habitual. -->
+    <script id="PAYLOAD" type="application/json">
+      {{PAYLOAD_JSON}}
+    </script>
+    <script>
+      "use strict";
+      // Contrato original intacto: eventos[sala][periodo].table.rows.
+      // Cada fila: [fecha_label, hora, vendidas, fecha_iso, cap, stock, abono].
+      // Los ejemplos solo se cargan con ?demo=1 cuando el placeholder no se ha sustituido.
+      (() => {
+        const $ = (id) => document.getElementById(id);
+        const node = (tag, className, text) => {
+          const el = document.createElement(tag);
+          if (className) el.className = className;
+          if (text !== undefined) el.textContent = text;
+          return el;
+        };
+        const number = (value) =>
+          value === null ||
+          value === undefined ||
+          String(value).trim() === "" ||
+          !Number.isFinite(Number(value))
+            ? null
+            : Number(value);
+        const fmt = (value) =>
+          value === null ? "—" : value.toLocaleString("es-ES");
+        const date = (value) => {
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value))) return null;
+          const d = new Date(value + "T00:00:00");
+          return Number.isNaN(d.getTime()) ||
+            d.getFullYear() !== Number(value.slice(0, 4)) ||
+            d.getMonth() + 1 !== Number(value.slice(5, 7)) ||
+            d.getDate() !== Number(value.slice(8, 10))
+            ? null
+            : d;
+        };
+        const sample = {
+          generated_at: "2026-10-11T16:30:00+02:00",
+          eventos: {
+            Escondido: {
+              proximas: {
+                table: {
+                  rows: [
+                    [
+                      "16 de octubre",
+                      "20:00",
+                      24,
+                      "2026-10-16",
+                      40,
+                      16,
+                      "venta",
+                    ],
+                    [
+                      "17 de octubre",
+                      "19:00",
+                      40,
+                      "2026-10-17",
+                      40,
+                      0,
+                      "agotado",
+                    ],
+                    [
+                      "18 de octubre",
+                      "18:30",
+                      7,
+                      "2026-10-18",
+                      40,
+                      33,
+                      "venta",
+                    ],
+                    [
+                      "6 de noviembre",
+                      "20:00",
+                      0,
+                      "2026-11-06",
+                      40,
+                      40,
+                      "venta",
+                    ],
+                  ],
+                },
+              },
+              pasadas: {
+                table: {
+                  rows: [
+                    [
+                      "9 de octubre",
+                      "20:00",
+                      38,
+                      "2026-10-09",
+                      40,
+                      2,
+                      "agotado",
+                    ],
+                  ],
+                },
+              },
+            },
+            "Sala Teatro": {
+              proximas: {
+                table: {
+                  rows: [
+                    ["17 de octubre", "21:00", 62, "2026-10-17", 120, 58, ""],
+                    ["24 de octubre", "19:30", 120, "2026-10-24", 120, 0, ""],
+                  ],
+                },
+              },
+            },
+            "Sala Estudio": { proximas: { table: { rows: [] } } },
+          },
+        };
+        let payload,
+          demo = false;
+        const raw = $("PAYLOAD").textContent.trim();
+        // Dividido para que un reemplazo global de la plantilla no afecte a esta comprobación.
+        const unresolved = raw === "{{" + "PAYLOAD_JSON" + "}}";
+        function fallback(title, message, offerDemo = false) {
+          $("fallback").hidden = false;
+          $("navigation").hidden = true;
+          $("fallback").replaceChildren(
+            node("strong", "", title),
+            node("p", "", message),
+          );
+          if (offerDemo) {
+            const button = node(
+              "button",
+              "demo-button",
+              "Explorar con datos de ejemplo",
+            );
+            button.type = "button";
+            button.onclick = () => {
+              const url = new URL(location.href);
+              url.searchParams.set("demo", "1");
+              location.href = url.href;
+            };
+            $("fallback").append(button);
+          }
+        }
+        try {
+          if (unresolved) {
+            if (new URLSearchParams(location.search).get("demo") === "1") {
+              payload = sample;
+              demo = true;
+            } else {
+              fallback(
+                "La cartelera está preparada",
+                "Los eventos aparecerán cuando el generador incorpore los datos. Puedes explorar el diseño con una muestra.",
+                true,
+              );
+              return;
+            }
+          } else {
+            payload = JSON.parse(raw);
+          }
+          if (
+            !payload ||
+            typeof payload !== "object" ||
+            !payload.eventos ||
+            typeof payload.eventos !== "object" ||
+            Array.isArray(payload.eventos)
+          )
+            throw new Error("Estructura de datos no válida");
+        } catch (error) {
+          fallback(
+            "No se pudieron cargar las sesiones",
+            "Revisa que los datos de la cartelera tengan un formato JSON válido.",
+          );
+          return;
+        }
+        if (demo) {
+          $("notice").hidden = false;
+          $("notice").append(
+            node("strong", "", "Vista de ejemplo"),
+            node(
+              "span",
+              "",
+              "Datos ficticios para revisar el diseño. El placeholder de producción permanece intacto.",
+            ),
+          );
+        }
+        const generated = new Date(payload.generated_at);
+        $("meta").textContent = Number.isNaN(generated.getTime())
+          ? "Actualización no disponible"
+          : (demo ? "Ejemplo · " : "Actualizado · ") +
+            generated.toLocaleString("es-ES", {
+              day: "2-digit",
+              month: "short",
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+        function connection() {
+          const el = $("connection");
+          el.replaceChildren(
+            node("i", "dot"),
+            node(
+              "span",
+              "",
+              navigator.onLine
+                ? "Consulta de sesiones"
+                : "Sin conexión · datos cargados",
+            ),
+          );
+        }
+        connection();
+        window.addEventListener("online", connection);
+        window.addEventListener("offline", connection);
+        const eventos = payload.eventos;
+        const salas = Object.keys(eventos);
+        let active = salas[0],
+          subMode = "proximas";
+        if (!salas.length) {
+          fallback(
+            "Todavía no hay salas",
+            "Las sesiones aparecerán aquí cuando estén disponibles.",
+          );
+          return;
+        }
+        $("dashboard").hidden = false;
+        const getRows = () => {
+          const rows = eventos[active]?.[subMode]?.table?.rows;
+          return Array.isArray(rows) ? rows.filter(Array.isArray) : [];
+        };
+        function periods() {
+          const ev = eventos[active] || {};
+          const keys = [
+            "proximas",
+            ...Object.keys(ev).filter(
+              (key) =>
+                key !== "proximas" && Array.isArray(ev[key]?.table?.rows),
+            ),
+          ];
+          if (!keys.includes(subMode)) subMode = "proximas";
+          $("subtabs").replaceChildren();
+          for (const key of keys) {
+            const labels = {
+              proximas: "Próximas",
+              pasadas: "Pasadas",
+              anteriores: "Anteriores",
+              historico: "Histórico",
+            };
+            const b = node(
+              "button",
+              "subtab" + (key === subMode ? " active" : ""),
+              labels[key] || key,
+            );
+            b.type = "button";
+            b.setAttribute("aria-pressed", String(key === subMode));
+            b.onclick = () => {
+              subMode = key;
+              updatePeriods();
+              render();
+            };
+            b.dataset.period = key;
+            $("subtabs").append(b);
+          }
+        }
+        function updatePeriods() {
+          for (const b of $("subtabs").children) {
+            b.classList.toggle("active", b.dataset.period === subMode);
+            b.setAttribute(
+              "aria-pressed",
+              String(b.dataset.period === subMode),
+            );
+          }
+        }
+        for (const sala of salas) {
+          const rows = eventos[sala]?.proximas?.table?.rows;
+          const count = Array.isArray(rows) ? rows.length : 0;
+          const b = node("button", "tab");
+          b.type = "button";
+          b.dataset.sala = sala;
+          b.append(node("span", "", sala), node("span", "tab-count", count));
+          b.setAttribute(
+            "aria-label",
+            sala + ", " + count + " sesiones próximas",
+          );
+          b.onclick = () => {
+            active = sala;
+            updateTabs();
+            periods();
+            render();
+          };
+          $("tabs").append(b);
+        }
+        function updateTabs() {
+          for (const b of $("tabs").children) {
+            b.classList.toggle("active", b.dataset.sala === active);
+            b.setAttribute("aria-pressed", String(b.dataset.sala === active));
+          }
+        }
+        function render() {
+          $("sala-title").textContent = active;
+          const from = $("from").value,
+            to = $("to").value;
+          const invalid = Boolean(from && to && from > to);
+          $("date-error").hidden = !invalid;
+          $("from").setAttribute("aria-invalid", String(invalid));
+          $("to").setAttribute("aria-invalid", String(invalid));
+          for (const id of ["from", "to"]) {
+            if (invalid) $(id).setAttribute("aria-describedby", "date-error");
+            else $(id).removeAttribute("aria-describedby");
+          }
+          const rows = getRows()
+            .map((r) => ({
+              fecha_label: r[0],
+              hora: r[1],
+              vendidas: number(r[2]),
+              fecha_iso: r[3],
+              cap: number(r[4]),
+              stock: number(r[5]),
+              abono: r[6],
+            }))
+            .filter(
+              (r) =>
+                !invalid &&
+                (!from || r.fecha_iso >= from) &&
+                (!to || r.fecha_iso <= to),
+            )
+            .sort(
+              (a, b) =>
+                String(a.fecha_iso).localeCompare(String(b.fecha_iso)) ||
+                String(a.hora)
+                  .padStart(5, "0")
+                  .localeCompare(String(b.hora).padStart(5, "0")),
+            );
+          $("stat-sessions").textContent = fmt(rows.length);
+          const sum = (key) =>
+            rows.some((r) => r[key] === null)
+              ? null
+              : rows.reduce((total, r) => total + r[key], 0);
+          $("stat-sales").textContent = fmt(sum("vendidas"));
+          $("stat-stock").textContent = fmt(sum("stock"));
+          $("result-count").textContent =
+            rows.length + " " + (rows.length === 1 ? "sesión" : "sesiones");
+          $("list").replaceChildren();
+          if (!rows.length) {
+            const empty = node("div", "empty");
+            empty.append(
+              node(
+                "strong",
+                "",
+                invalid
+                  ? "Revisa el intervalo de fechas"
+                  : "No hay sesiones en esta vista",
+              ),
+              node(
+                "p",
+                "",
+                invalid
+                  ? "Ajusta las fechas para consultar las sesiones."
+                  : from || to
+                    ? "Prueba con otras fechas o limpia el filtro."
+                    : "Selecciona otra sala o periodo para seguir explorando.",
+              ),
+            );
+            $("list").append(empty);
+            return;
+          }
+          let currentMonth = null,
+            ul;
+          for (const r of rows) {
+            const d = date(r.fecha_iso),
+              key = d ? String(r.fecha_iso).slice(0, 7) : "unknown";
+            if (key !== currentMonth) {
+              currentMonth = key;
+              const group = node("section", "month-group");
+              group.append(
+                node(
+                  "h3",
+                  "month-heading",
+                  d
+                    ? d.toLocaleDateString("es-ES", {
+                        month: "long",
+                        year: "numeric",
+                      })
+                    : "Fecha pendiente",
+                ),
+              );
+              ul = node("ul", "events");
+              group.append(ul);
+              $("list").append(group);
+            }
+            const sold = r.stock === 0,
+              chip = sold
+                ? "sold"
+                : r.vendidas >= 10
+                  ? "gold"
+                  : r.vendidas >= 1
+                    ? "green"
+                    : "gray";
+            const li = node("li");
+            const card = node("article", "item" + (sold ? " is-sold" : ""));
+            const tile = node("div", "date-tile");
+            tile.setAttribute("aria-hidden", "true");
+            tile.append(
+              node(
+                "span",
+                "",
+                d ? d.toLocaleDateString("es-ES", { weekday: "short" }) : "—",
+              ),
+              node("strong", "", d ? d.getDate() : "—"),
+            );
+            const left = node("div", "item-left");
+            const time = node(
+              "h4",
+              "session-time",
+              r.hora ? String(r.hora) + " h" : "Hora pendiente",
+            );
+            const label = node("div", "session-date");
+            const dateText = node(
+              "time",
+              "",
+              String(r.fecha_label || "Fecha pendiente") +
+                (d
+                  ? " · " + d.toLocaleDateString("es-ES", { weekday: "long" })
+                  : ""),
+            );
+            if (d) dateText.dateTime = r.fecha_iso;
+            label.append(dateText);
+            left.append(time, label);
+            const right = node("div", "item-right");
+            const nums = node("div", "numbers");
+            nums.append(
+              node("strong", "", fmt(r.vendidas)),
+              document.createTextNode(" vendidas"),
+            );
+            if (active === "Escondido") {
+              nums.append(
+                document.createTextNode(" / " + fmt(r.cap) + " · "),
+                node("strong", "", fmt(r.stock)),
+                document.createTextNode(" disponibles"),
+              );
+            } else if (r.stock !== null) {
+              nums.append(
+                document.createTextNode(" · " + fmt(r.stock) + " disponibles"),
+              );
+            }
+            right.append(nums);
+            const badges = node("div", "badges");
+            badges.append(
+              node(
+                "span",
+                "chip " + chip,
+                sold
+                  ? "Agotado"
+                  : r.stock === null
+                    ? "Stock no informado"
+                    : r.vendidas === 0
+                      ? "Sin ventas todavía"
+                      : "Disponible",
+              ),
+            );
+            if (
+              active === "Escondido" &&
+              (r.abono === "venta" || r.abono === "agotado")
+            )
+              badges.append(
+                node(
+                  "span",
+                  "chip abono-chip " + (r.abono === "venta" ? "green" : "sold"),
+                  "Abono: " + (r.abono === "venta" ? "Disponible" : "Agotado"),
+                ),
+              );
+            right.append(badges);
+            if (r.cap > 0 && r.vendidas !== null) {
+              const meter = node("div", "meter");
+              meter.setAttribute("aria-hidden", "true");
+              const fill = node("span");
+              fill.style.width =
+                Math.max(0, Math.min(100, (r.vendidas / r.cap) * 100)) + "%";
+              meter.append(fill);
+              right.append(meter);
+            }
+            card.append(tile, left, right);
+            li.append(card);
+            ul.append(li);
+          }
+        }
+        $("from").addEventListener("change", render);
+        $("to").addEventListener("change", render);
+        $("reset").onclick = () => {
+          $("from").value = "";
+          $("to").value = "";
+          render();
+        };
+        updateTabs();
+        periods();
+        render();
+      })();
+    </script>
+    <script>
+      // Se conservan la ruta y versión originales. El SW requiere HTTPS o localhost.
+      if (
+        "serviceWorker" in navigator &&
+        (location.protocol === "https:" ||
+          location.hostname === "localhost" ||
+          location.hostname === "127.0.0.1")
+      ) {
+        navigator.serviceWorker
+          .register("sw.js?v=20251201")
+          .catch((error) =>
+            console.warn("No se pudo registrar el service worker:", error),
+          );
+      }
+    </script>
+  </body>
 </html>
