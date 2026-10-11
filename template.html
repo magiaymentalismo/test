@@ -12,6 +12,7 @@
       content="Sesiones, disponibilidad y ventas de Magia & Teatro."
     />
     <link rel="manifest" href="manifest.json?v=20251201" />
+    <link rel="manifest" href="manifest.json?v=20260601" />
     <meta name="theme-color" content="#101820" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
@@ -754,6 +755,218 @@
       #contenido {
         scroll-margin-top: 100px;
       }
+      /* Liquid Glass · edición viva. Cambia estos tonos para personalizar cada sala. */
+      :root {
+        --bg: #120e29;
+        --muted: #ccc5e2;
+        --mint: #aef9df;
+        --glass: #302452e6;
+        --room: #ccaeff;
+        --room-rgb: 178, 126, 255;
+      }
+      body {
+        background: #120e29;
+      }
+      body:before {
+        background:
+          radial-gradient(ellipse at 5% 5%, #8d38f888, transparent 48%),
+          radial-gradient(ellipse at 95% 30%, #1877ef77, transparent 48%),
+          radial-gradient(ellipse at 65% 95%, #ef4e8766, transparent 48%);
+      }
+      .hero {
+        position: relative;
+      }
+      h1 {
+        color: #fff;
+        text-shadow: 0 5px 50px #d18eff42;
+      }
+      .eyebrow {
+        color: #e6bbff;
+      }
+      .mark {
+        background: linear-gradient(135deg, #b051ff, #536cff);
+        border-color: #eed1ff88;
+        color: white;
+        box-shadow: 0 0 26px #a354ff55;
+      }
+      .navigation {
+        background: linear-gradient(120deg, #7145ae99, #26376ccc);
+        border-color: #eadbff55;
+        box-shadow:
+          inset 0 1px 0 #ffffff66,
+          0 12px 38px #08031655;
+      }
+      .tab.active {
+        background: var(--room);
+        color: #21102f;
+        box-shadow:
+          inset 0 1px 0 #fffc,
+          0 3px 20px rgba(var(--room-rgb), 0.32);
+      }
+      .tab:nth-child(3n + 1) {
+        --room: #ddbbff;
+        --room-rgb: 192, 134, 255;
+      }
+      .tab:nth-child(3n + 2) {
+        --room: #adddff;
+        --room-rgb: 91, 177, 255;
+      }
+      .tab:nth-child(3n + 3) {
+        --room: #ffbacf;
+        --room-rgb: 255, 138, 176;
+      }
+      .overview {
+        overflow: hidden;
+        background: #1b1738aa;
+        border-color: #ddc2ff30;
+      }
+      .stat {
+        position: relative;
+      }
+      .stat:first-child dd {
+        color: #ddbbff;
+      }
+      .stat:nth-child(2) dd {
+        color: #a8dcff;
+      }
+      .stat:nth-child(3) dd {
+        color: #aef9df;
+      }
+      .stat dt {
+        color: #d0cae5;
+      }
+      .item {
+        background: linear-gradient(
+          115deg,
+          rgba(var(--room-rgb), 0.16),
+          #231e3be8 70%
+        );
+        border-color: rgba(var(--room-rgb), 0.28);
+        border-left: 3px solid var(--room);
+        box-shadow:
+          inset 0 1px 0 #ffffff10,
+          0 6px 20px #07021820;
+      }
+      .item:hover {
+        background: linear-gradient(
+          115deg,
+          rgba(var(--room-rgb), 0.24),
+          #2c2548 80%
+        );
+        border-color: var(--room);
+      }
+      .date-tile {
+        background: linear-gradient(
+          145deg,
+          rgba(var(--room-rgb), 0.32),
+          rgba(var(--room-rgb), 0.09)
+        );
+        border-color: rgba(var(--room-rgb), 0.35);
+        color: white;
+      }
+      .date-tile span {
+        color: #e4dced;
+      }
+      .month-heading {
+        color: var(--room);
+      }
+      .meter span {
+        background: linear-gradient(90deg, var(--room), #aef9df);
+      }
+      .green {
+        color: #b1ffda;
+        background: #25c88126;
+      }
+      .gold {
+        color: #ffdf9e;
+        background: #e5a2212b;
+      }
+      .sold {
+        color: #ffc3cf;
+        background: #ff48772c;
+      }
+      .is-sold {
+        border-left-color: #ff97b2;
+      }
+      .is-sold .date-tile {
+        background: #eb547b17;
+        border-color: #ff9ab32b;
+      }
+      .subtab.active {
+        background: #b488fb33;
+      }
+      .field input {
+        background: #211a3dcc;
+        border-color: #baa1dd55;
+      }
+      .quick-dates {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 0 0 17px;
+      }
+      .quick-date {
+        min-height: 44px;
+        padding: 10px 16px;
+        border: 1px solid #d7beff44;
+        border-radius: 999px;
+        color: #e7dbff;
+        background: #7452ac24;
+        font-size: 12px;
+        transition: background 0.18s;
+      }
+      .quick-date:hover {
+        background: #a479db44;
+      }
+      .quick-date[aria-pressed="true"] {
+        color: #241333;
+        background: #ddbbff;
+        border-color: #eedaff;
+      }
+      .source {
+        display: inline-block;
+        font-size: 11px;
+        letter-spacing: 0.03em;
+        color: var(--room);
+        margin-top: 7px;
+      }
+      .notice {
+        background: #69489c20;
+      }
+      .hero-note {
+        border-color: #ccaeff55;
+      }
+      @supports not (backdrop-filter: blur(1px)) {
+        .navigation {
+          background: #382956;
+        }
+      }
+      @media (prefers-reduced-transparency: reduce) {
+        .navigation {
+          background: #382956;
+        }
+        .item {
+          background: #29203d;
+        }
+      }
+      @media (max-width: 650px) {
+        .filters {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        }
+        .field {
+          min-width: 0;
+        }
+        .result-count {
+          justify-self: end;
+        }
+        .quick-date {
+          padding: 9px 13px;
+        }
+        .hero {
+          padding-top: 30px;
+        }
+      }
     </style>
   </head>
   <body id="inicio">
@@ -810,6 +1023,32 @@
               aria-label="Periodo de las sesiones"
             ></div>
           </div>
+          <div class="quick-dates" role="group" aria-label="Buscar por fechas">
+            <button
+              type="button"
+              class="quick-date"
+              data-range="today"
+              aria-pressed="false"
+            >
+              Hoy
+            </button>
+            <button
+              type="button"
+              class="quick-date"
+              data-range="weekend"
+              aria-pressed="false"
+            >
+              Este fin de semana
+            </button>
+            <button
+              type="button"
+              class="quick-date"
+              data-range="month"
+              aria-pressed="false"
+            >
+              Este mes
+            </button>
+          </div>
           <div class="filters">
             <label class="field">Desde<input type="date" id="from" /></label
             ><label class="field">Hasta<input type="date" id="to" /></label
@@ -849,6 +1088,8 @@
       "use strict";
       // Contrato original intacto: eventos[sala][periodo].table.rows.
       // Cada fila: [fecha_label, hora, vendidas, fecha_iso, cap, stock, abono].
+      // Columnas actuales: Fecha, Hora, Vendidas, FechaISO, Capacidad, Stock, BuyUrl, Source.
+      // También admite Abono explícito y el formato legado.
       // Los ejemplos solo se cargan con ?demo=1 cuando el placeholder no se ha sustituido.
       (() => {
         const $ = (id) => document.getElementById(id);
@@ -954,6 +1195,27 @@
         };
         let payload,
           demo = false;
+        for (const [room, event] of Object.entries(sample.eventos)) {
+          for (const section of Object.values(event)) {
+            section.table.headers = [
+              "Fecha",
+              "Hora",
+              "Vendidas",
+              "FechaISO",
+              "Capacidad",
+              "Stock",
+              "BuyUrl",
+              "Source",
+              "Abono",
+            ];
+            section.table.rows = section.table.rows.map((r) => [
+              ...r.slice(0, 6),
+              null,
+              room === "Escondido" ? "onebox" : "dinaticket",
+              r[6],
+            ]);
+          }
+        }
         const raw = $("PAYLOAD").textContent.trim();
         // Dividido para que un reemplazo global de la plantilla no afecte a esta comprobación.
         const unresolved = raw === "{{" + "PAYLOAD_JSON" + "}}";
@@ -1018,6 +1280,7 @@
               "span",
               "",
               "Datos ficticios para revisar el diseño. El placeholder de producción permanece intacto.",
+              "Datos ficticios para explorar el diseño y los filtros.",
             ),
           );
         }
@@ -1126,6 +1389,13 @@
           $("tabs").append(b);
         }
         function updateTabs() {
+          const palette = [
+            ["#ddbbff", "192,134,255"],
+            ["#adddff", "91,177,255"],
+            ["#ffbacf", "255,138,176"],
+          ][salas.indexOf(active) % 3];
+          document.documentElement.style.setProperty("--room", palette[0]);
+          document.documentElement.style.setProperty("--room-rgb", palette[1]);
           for (const b of $("tabs").children) {
             b.classList.toggle("active", b.dataset.sala === active);
             b.setAttribute("aria-pressed", String(b.dataset.sala === active));
@@ -1143,6 +1413,10 @@
             if (invalid) $(id).setAttribute("aria-describedby", "date-error");
             else $(id).removeAttribute("aria-describedby");
           }
+          const table = eventos[active]?.[subMode]?.table || {};
+          const headers = Array.isArray(table.headers) ? table.headers : [];
+          const index = (name, fallback) =>
+            headers.includes(name) ? headers.indexOf(name) : fallback;
           const rows = getRows()
             .map((r) => ({
               fecha_label: r[0],
@@ -1153,8 +1427,31 @@
               stock: number(r[5]),
               abono: r[6],
             }))
+            .map((r) => {
+              // El contrato actual usa BuyUrl/Source en las posiciones 6 y 7.
+              // Abono solo se interpreta si está identificado por nombre o valor legado.
+              const legacyAbono =
+                !headers.length && ["venta", "agotado"].includes(r[6]);
+              return {
+                fecha_label: r[index("Fecha", 0)],
+                hora: r[index("Hora", 1)],
+                vendidas: number(r[index("Vendidas", 2)]),
+                fecha_iso: r[index("FechaISO", 3)],
+                cap: number(r[index("Capacidad", 4)]),
+                stock: number(r[index("Stock", 5)]),
+                buyUrl: legacyAbono ? null : r[index("BuyUrl", 6)],
+                source: r[index("Source", 7)] || null,
+                abono: headers.includes("Abono")
+                  ? r[headers.indexOf("Abono")]
+                  : legacyAbono
+                    ? r[6]
+                    : null,
+              };
+            })
             .filter(
               (r) =>
+                r.fecha_iso &&
+                r.hora &&
                 !invalid &&
                 (!from || r.fecha_iso >= from) &&
                 (!to || r.fecha_iso <= to),
@@ -1227,6 +1524,7 @@
               chip = sold
                 ? "sold"
                 : r.vendidas >= 10
+                : r.stock !== null && r.stock <= 3
                   ? "gold"
                   : r.vendidas >= 1
                     ? "green"
@@ -1261,6 +1559,19 @@
             if (d) dateText.dateTime = r.fecha_iso;
             label.append(dateText);
             left.append(time, label);
+            left.append(
+              time,
+              label,
+              node(
+                "span",
+                "source",
+                r.source === "onebox"
+                  ? "Onebox"
+                  : r.source === "dinaticket"
+                    ? "Dina"
+                    : "Entradas",
+              ),
+            );
             const right = node("div", "item-right");
             const nums = node("div", "numbers");
             nums.append(
@@ -1268,6 +1579,7 @@
               document.createTextNode(" vendidas"),
             );
             if (active === "Escondido") {
+            {
               nums.append(
                 document.createTextNode(" / " + fmt(r.cap) + " · "),
                 node("strong", "", fmt(r.stock)),
@@ -1288,9 +1600,16 @@
                   ? "Agotado"
                   : r.stock === null
                     ? "Stock no informado"
+                    : r.stock <= 3
+                      ? "Últimas " +
+                        fmt(r.stock) +
+                        (r.stock === 1 ? " entrada" : " entradas")
                     : r.vendidas === 0
                       ? "Sin ventas todavía"
                       : "Disponible",
+                      : r.vendidas === 0
+                        ? "Sin ventas todavía"
+                        : "Disponible",
               ),
             );
             if (
@@ -1321,9 +1640,59 @@
         }
         $("from").addEventListener("change", render);
         $("to").addEventListener("change", render);
+        let selectedRange = null;
+        function resetQuick() {
+          selectedRange = null;
+          document
+            .querySelectorAll(".quick-date")
+            .forEach((b) => b.setAttribute("aria-pressed", "false"));
+        }
+        function localISO(d) {
+          return [
+            d.getFullYear(),
+            String(d.getMonth() + 1).padStart(2, "0"),
+            String(d.getDate()).padStart(2, "0"),
+          ].join("-");
+        }
+        document.querySelectorAll(".quick-date").forEach((button) => {
+          button.onclick = () => {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            let start = new Date(today),
+              end = new Date(today);
+            selectedRange = button.dataset.range;
+            if (selectedRange === "weekend") {
+              // Viernes a domingo. Durante el fin de semana conserva el actual.
+              const day = today.getDay();
+              start.setDate(
+                today.getDate() + (day === 0 ? -2 : day === 6 ? -1 : 5 - day),
+              );
+              end = new Date(start);
+              end.setDate(start.getDate() + 2);
+            } else if (selectedRange === "month") {
+              start = new Date(today.getFullYear(), today.getMonth(), 1);
+              end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            }
+            $("from").value = localISO(start);
+            $("to").value = localISO(end);
+            document
+              .querySelectorAll(".quick-date")
+              .forEach((b) =>
+                b.setAttribute("aria-pressed", String(b === button)),
+              );
+            render();
+          };
+        });
+        ["from", "to"].forEach((id) =>
+          $(id).addEventListener("change", () => {
+            resetQuick();
+            render();
+          }),
+        );
         $("reset").onclick = () => {
           $("from").value = "";
           $("to").value = "";
+          resetQuick();
           render();
         };
         updateTabs();
@@ -1339,12 +1708,43 @@
           location.hostname === "localhost" ||
           location.hostname === "127.0.0.1")
       ) {
+      (function () {
+        if (!("serviceWorker" in navigator)) return;
+        const RELOAD_KEY = "sw-reloaded-once";
         navigator.serviceWorker
           .register("sw.js?v=20251201")
           .catch((error) =>
             console.warn("No se pudo registrar el service worker:", error),
           );
       }
+          .register("sw.js?v=2026-06-01-01")
+          .then((reg) => {
+            reg.update().catch(() => {});
+            function activateWaitingSW() {
+              if (!reg.waiting) return;
+              reg.waiting.postMessage({ type: "SKIP_WAITING" });
+            }
+            activateWaitingSW();
+            reg.addEventListener("updatefound", () => {
+              const sw = reg.installing;
+              if (!sw) return;
+              sw.addEventListener("statechange", () => {
+                if (
+                  sw.state === "installed" &&
+                  navigator.serviceWorker.controller
+                ) {
+                  activateWaitingSW();
+                }
+              });
+            });
+            navigator.serviceWorker.addEventListener("controllerchange", () => {
+              if (sessionStorage.getItem(RELOAD_KEY) === "1") return;
+              sessionStorage.setItem(RELOAD_KEY, "1");
+              window.location.reload();
+            });
+          })
+          .catch(console.error);
+      })();
     </script>
   </body>
 </html>
